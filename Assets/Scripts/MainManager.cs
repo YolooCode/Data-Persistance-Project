@@ -14,14 +14,19 @@ public class MainManager : MonoBehaviour
     public GameObject GameOverText;
     
     private bool m_Started = false;
-    private int m_Points;
+    public static int m_Points;
     
     private bool m_GameOver = false;
+
+    
 
     
     // Start is called before the first frame update
     void Start()
     {
+        m_Points = 0;
+
+        ScoreText.text = $"{Persistance.PlayerName} scored : {m_Points}";
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -57,7 +62,20 @@ public class MainManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+                if (Persistance.CurrentHighScore < m_Points)
+                {
+                   Persistance.CurrentHighScore = m_Points;
+
+                    if (Persistance.HaighscorePlayersName != Persistance.PlayerName)
+                    {
+                        Persistance.HaighscorePlayersName = Persistance.PlayerName;
+                    }
+                }
+
+                Persistance.SaveGame();
+                SceneManager.LoadScene("MainMeniu");
+
             }
         }
     }
@@ -65,7 +83,7 @@ public class MainManager : MonoBehaviour
     void AddPoint(int point)
     {
         m_Points += point;
-        ScoreText.text = $"Score : {m_Points}";
+        ScoreText.text = $"{Persistance.PlayerName} Scored : {m_Points}";
     }
 
     public void GameOver()
